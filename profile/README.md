@@ -15,7 +15,7 @@ on:
 
 jobs:
   auto-merge-dotnet:
-    uses: kinectify/.github/.github/workflows/auto-approve-merge-dotnet.yml@main
+    uses: kinectify/.github/workflows/auto-approve-merge-dotnet.yml@main
 ```
 
 With this configuration, your repository will always use the latest version of the base workflow from this central repo.
