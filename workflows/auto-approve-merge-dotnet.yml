@@ -1,0 +1,36 @@
+name: Base .NET Auto Approve and Merge
+
+on:
+  workflow_call:
+
+jobs:
+  approve-and-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check changed files
+        id: files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |
+            **/*.csproj
+            Directory.Packages.props
+
+      - name: Approve if only .csproj or props files changed
+        if: steps.files.outputs.only_changed == 'true'
+        uses: hmarr/auto-approve-action@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Wait for status checks
+        if: steps.files.outputs.only_changed == 'true'
+        uses: WyriHaximus/github-action-wait-for-status@v1
+        with:
+          ignoreActions: '["Base .NET Auto Approve and Merge"]'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Auto-merge PR
+        if: steps.files.outputs.only_changed == 'true'
+        uses: pascalgn/automerge-action@v0.16.3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
